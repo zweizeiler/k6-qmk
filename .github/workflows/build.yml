@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Clone SonixQMK
         run: git clone https://github.com/SonixQMK/qmk_firmware.git
       - name: Install qmk deps
@@ -22,7 +22,7 @@ jobs:
       - name: Compile firmware
         run: cd qmk_firmware && make keychron/k6/rgb/ansi:ansi-josh
       - name: Upload compiled firmware (build artifact)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Keychron K6 QMK Firmware
           path: qmk_firmware/keychron_k6_rgb_ansi_ansi-josh.bin
