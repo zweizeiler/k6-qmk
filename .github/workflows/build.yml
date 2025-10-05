@@ -9,29 +9,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Clone SonixQMK
         run: git clone https://github.com/SonixQMK/qmk_firmware.git
+
       - name: Install qmk deps
         run: cd qmk_firmware && ./util/qmk_install.sh && python3 -m pip install qmk
+
       - name: fix gcc
         run: sudo bash .github/scripts/update-gcc10-ubuntu.sh
+
       - name: Install git submodules
         run: cd qmk_firmware && make git-submodule
+
       - name: Copy custom keymaps
         run: cp -rp keyboards/keychron/k6 qmk_firmware/keyboards/keychron/
+
       - name: Compile firmware
         run: cd qmk_firmware && make keychron/k6/rgb/ansi:ansi-josh
+
       - name: Upload compiled firmware (build artifact)
         uses: actions/upload-artifact@v4
         with:
           name: Keychron K6 QMK Firmware
-          path: qmk_firmware/keychron_k6_rgb_ansi_ansi-josh.bin
+          path: |
+            qmk_firmware/*.bin
+            qmk_firmware/.build/**/*.bin
+
       - name: Upload compiled firmware (tagged release)
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            qmk_firmware/keychron_k6_rgb_ansi_ansi-josh.bin
+            qmk_firmware/*.bin
+            qmk_firmware/.build/**/*.bin
+
+    # macOS alternative (commented out)
     # runs-on: macos-11
     # steps:
     #   - uses: actions/checkout@v2
@@ -56,4 +69,5 @@ jobs:
     #     if: startsWith(github.ref, 'refs/tags/')
     #     with:
     #       files: |
-    #         qmk_firmware/keychron_k6_ansi-josh.bin
+    #         qmk_firmware/*.bin
+    #         qmk_firmware/.build/**/*.bin
